@@ -51,11 +51,11 @@ class RRT
         Node* randomNode()
         {
             Node* node = new Node();
+
             node->x = rand() % ROWS;
-            
             node->y = rand() % COLS;
             node->parent = nullptr;
-            // cout<<node->x<<"|"<<node->y<<endl;
+            
             return node;
         }
 
@@ -64,7 +64,7 @@ class RRT
             Node* nearest = nodes[0];
             float minDistance = distance(node, nearest);
 
-            for(int i=1; i<nodes.size(); i++)
+            for(int i=0; i<nodes.size(); i++)
             {
                 float d = distance(node, nodes[i]);
                 if(d<minDistance)
@@ -96,7 +96,7 @@ class RRT
             return node;
         }
 
-        bool isCloseToGoal(Node* node)
+        bool hasReachedGoal(Node* node)
         {
             return distance(node, goal) <= STEP_SIZE;
         }
@@ -106,32 +106,30 @@ class RRT
             int dx = abs(n2->x - n1->x);
             int dy = abs(n2->y - n1->y);
 
-            int sx = n1->x < n2->x ? 1 : -1;
-            int sy = n1->y < n2->y ? 1 : -1;
+            int step_x = n1->x < n2->x ? 1 : -1;
+            int step_y = n1->y < n2->y ? 1 : -1;
 
-            int err = dx - dy;
+            int delta = dx - dy;
             
             int x = n1->x;
             int y = n1->y;
 
             while(x != n2->x || y != n2->y)
             {
-             
-                int e2 = 2*err;
+                int error = 2*delta;
 
-                if(e2 > -dy)
+                if(error > -dy)
                 {
-                    err -= dy;
-                    x += sx;
+                    delta -= dy;
+                    x += step_x;
                 }
 
-                if(e2 < dx)
+                if(error < dx)
                 {
-                    err += dx;
-                    y += sy;
+                    delta += dx;
+                    y += step_y;
                 }
             }
-
             return true;
         }
 
@@ -179,7 +177,7 @@ class RRT
 
             goal = new Node();
             goal->x = 8;
-            goal->y = 9;
+            goal->y = 10;
             goal->parent = nullptr;
 
             nodes.push_back(start);
@@ -211,7 +209,7 @@ class RRT
                 {
                     nodes.push_back(node);
 
-                    if(isCloseToGoal(node))
+                    if(hasReachedGoal(node))
                     {
                         goalFound = true;
                         pathFound = true;
@@ -310,15 +308,33 @@ class RRT
             }
             cout<<endl;
 
+            cout<<"\t-- Path Visualization --"<<endl;
+            for(int i=0; i<ROWS; i++)
+            {
+                cout<<"     ";
+                for(int j=0; j<COLS; j++)
+                {
+                    if(i == start->x && j == start->y)
+                        cout<<"->";
+                    else if(i == goal->x && j == goal->y)
+                        cout<<">|";
+                    else if(Path[i][j] == 8)
+                        cout<<"* ";
+                    else if(Path[i][j] == 1)
+                        cout<<"| ";
+                    else
+                        cout<<"  ";
+                }
+                cout<<endl;
+            }
+            cout<<endl;
+
             // reverse(path.begin(), path.end());
             // for (int i = 0; i < path.size(); i++)
             // {
             //     cout << "Path node " << i << ": (" << path[i]->x << ", " << nodes[i]->y << ")"<< endl;
             // }
         }
-        
-
-
 };
 
 int main()
