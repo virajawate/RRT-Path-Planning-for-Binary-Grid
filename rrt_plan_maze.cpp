@@ -73,7 +73,6 @@ class RRT
                     minDistance = d;
                 }
             }
-
             return nearest;
         }
 
@@ -188,7 +187,6 @@ class RRT
 
         bool goalreach(Node* cell)
         {
-            
             if(cell==goal)
                 return true;
 
